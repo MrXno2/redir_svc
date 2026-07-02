@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from src.core import settings
+from src.core.settings import settings
 from fastapi.middleware.cors import CORSMiddleware
 
 
