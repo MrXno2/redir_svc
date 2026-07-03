@@ -24,3 +24,7 @@ class URLNotFound(BaseException):
 
 class ListEmpty(BaseException):
     """Список пуст."""
+
+
+class RedirCreateError(BaseException):
+    """Не успешное создание ссылки."""

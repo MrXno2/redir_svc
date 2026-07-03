@@ -54,3 +54,13 @@ def register_exception_handlers(app: FastAPI):
                 "error_type": "ListEmpty"
             }
         )
+    
+    @app.exception_handler(custom_exception.RedirCreateError)
+    async def redir_create_error_handler(request: Request, exc: Exception):
+        return JSONResponse(
+            status_code=409,
+            content={
+                "message": "Данный url уже занят.",
+                "error_type": "RedirCreateError"
+            }
+        )
