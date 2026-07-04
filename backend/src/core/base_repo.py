@@ -1,5 +1,5 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class BaseRepository:
@@ -10,7 +10,7 @@ class BaseRepository:
         """Проверять на None результат выполнения."""
         try:
             await self.db.commit()
-        except IntegrityError:
+        except IntegrityError as err:
             await self.db.rollback()
-            raise error_cls()
+            raise error_cls() from err
         return True

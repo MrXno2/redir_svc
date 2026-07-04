@@ -7,11 +7,11 @@ on:
       - develop
     paths:
       - 'backend/**'
-      - '.github/workflows/ci.yml'
+      - '.github/workflows/CICD.yml'
   pull_request:
     paths:
       - 'backend/**'
-      - '.github/workflows/ci.yml'
+      - '.github/workflows/CICD.yml'
 jobs:
   backend:
     runs-on: ubuntu-latest

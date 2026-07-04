@@ -1,10 +1,13 @@
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
+
+from src.core.logger import logger
 from src.core.exception_handler import register_exception_handlers
-from src.db.base import Base
-from src.db.session import engine
 from src.core.middleware import set_cors
 from src.core.security import auth
+from src.db.base import Base
+from src.db.session import engine
 from src.modules.auth.routers import router as router_auth
 from src.modules.redir.routers import router_api, router_redir
 
@@ -13,9 +16,10 @@ from src.modules.redir.routers import router_api, router_redir
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    print("START redir_svc/backend")
+    logger.warning("START redir_svc/backend")
     yield
-    print("STOP redir_svc/backend")
+    logger.warning("STOP redir_svc/backend")
+
 
 app = FastAPI(lifespan=lifespan)
 

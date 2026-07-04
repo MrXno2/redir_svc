@@ -27,3 +27,12 @@ plan.txt
 .ruff_cache
 
 start_dev.sh
+
+.gitignore
+Dockerfile
+docker-compose.yml
+compose.yml
+compose.dev.yml
+logs
+.log
+tests

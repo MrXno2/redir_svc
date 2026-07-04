@@ -1,30 +1,40 @@
-class BaseException(Exception):
+class BaseAppException(Exception):
     """Базовый класс кастомных ошибок."""
+
     pass
 
 
-class UserNotFound(BaseException):
+class UserNotFound(BaseAppException):
     """Юзер не найден."""
+
     pass
 
 
-class InvalidPassword(BaseException):
+class InvalidPassword(BaseAppException):
     """Неверный пароль."""
+
     pass
 
 
-class UserAlreadyExists(BaseException):
+class UserAlreadyExists(BaseAppException):
     """Пользователь уже существует."""
+
     pass
 
 
-class URLNotFound(BaseException):
+class URLNotFound(BaseAppException):
     """Сыылка устарела или не существует."""
 
+    pass
 
-class ListEmpty(BaseException):
+
+class ListEmpty(BaseAppException):
     """Список пуст."""
 
+    pass
 
-class RedirCreateError(BaseException):
-    """Не успешное создание ссылки."""
+
+class RedirCreateError(BaseAppException):
+    """Не успешное создание ссылки."""  # noqa: RUF002
+
+    pass

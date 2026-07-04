@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class RedirRequestSchema(BaseModel):
@@ -13,11 +13,13 @@ class RedirRequestSchema(BaseModel):
         if v.startswith(("http://", "https://")):
             return v
         return f"https://{v}"
-    
+
 
 class RedirResponseSchema(BaseModel):
-#    uuid: UUID
-#    user_uuid: UUID
+    model_config = ConfigDict(from_attributes=True)
+
+    #    uuid: UUID
+    #    user_uuid: UUID
     default_url: str
     redir_url: str
     redir_count: int
