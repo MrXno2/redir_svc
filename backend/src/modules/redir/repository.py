@@ -1,14 +1,13 @@
-from sqlalchemy import select, update
+from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.base_repo import BaseRepository
 from src.db.models.redir import RedirModel
 from src.modules.redir.schemas import RedirResponseSchema
 
 
-class RedirRepository(BaseRepository):
+class RedirRepository:
     def __init__(self, db: AsyncSession) -> None:
-        super().__init__(db)
+        self.db = db
 
 
     async def redir_set_url(
@@ -19,13 +18,11 @@ class RedirRepository(BaseRepository):
         return url
 
 
-    async def redir_get_list(self, user_uuid: str) -> list[RedirResponseSchema]:
+    async def redir_get_list(self, user_uuid: str) -> list[RedirModel]:
         redir_list = await self.db.execute(
             select(RedirModel).where(RedirModel.user_uuid == user_uuid)
         )
-        redir_models = redir_list.scalars().all()
-
-        return [RedirResponseSchema.model_validate(model) for model in redir_models]
+        return list(redir_list.scalars().all())
 
 
     async def redir_get_url(self, redir_url: str) -> RedirModel | None:
@@ -36,3 +33,14 @@ class RedirRepository(BaseRepository):
             .returning(RedirModel)
         )
         return url.scalar_one_or_none()
+    
+
+    async def redir_del_url(self, uuid_user: str, redir_url: str) -> None:
+        await self.db.execute(
+            delete(RedirModel)
+            .where(
+                (RedirModel.user_uuid == uuid_user) &
+                (RedirModel.redir_url == redir_url)
+            )
+        )
+        await self.db.commit()

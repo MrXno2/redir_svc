@@ -10,6 +10,7 @@ from src.db.base import Base
 from src.db.session import engine
 from src.modules.auth.routers import router as router_auth
 from src.modules.redir.routers import router_api, router_redir
+from src.cache.redis import redis_engine
 
 
 @asynccontextmanager
@@ -18,6 +19,7 @@ async def lifespan(app: FastAPI):
         await conn.run_sync(Base.metadata.create_all)
     logger.warning("START redir_svc/backend")
     yield
+    await redis_engine.aclose()
     logger.warning("STOP redir_svc/backend")
 
 
@@ -30,7 +32,9 @@ auth.handle_errors(app)
 register_exception_handlers(app)
 
 app.include_router(router_auth)
-
 app.include_router(router_api)
-
 app.include_router(router_redir)
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}

@@ -1,4 +1,11 @@
 services:
+  redis:
+    image: redis:8.8.0-alpine
+
+    ports:
+      - "6379:6379"
+      
+    restart: unless-stopped
   db:
     image: postgres:16-alpine
 
@@ -34,6 +41,12 @@ services:
 
     volumes:
       - ./logs:/app/logs 
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
     restart: unless-stopped
 

@@ -1,16 +1,21 @@
 from datetime import timedelta
+from pathlib import Path
 
 from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from authx.types import TokenLocation
 
 
+# нужно установить прямой путь к корню проекта и передавать в env
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env", env_file_encoding="utf-8")
 
     PROJECT_NAME: str = "my-project"
-
-    REDIS_HOST: str = "redis"
+    # docker run -d --name my-redis -p 6379:6379 redis:alpine
+    REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
 
     CORS_ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
@@ -28,6 +33,12 @@ class Settings(BaseSettings):
     POSTGRES_NAME: str = "postgres"
     POSTGRES_IP: str = "localhost"
     POSTGRES_PORT: int = 5432
+
+
+    @computed_field
+    @property
+    def REDIS_URL(self) -> str:
+        return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"
 
     @computed_field
     @property
