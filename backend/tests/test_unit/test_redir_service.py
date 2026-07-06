@@ -21,14 +21,18 @@ def service(mock_session):
 class TestRedirSetUrl:
     @pytest.mark.asyncio(loop_scope="function")
     async def test_default_url_generates_random(self, service):
-        req = RedirRequestSchema(default_url="https://example.com", custom_url="default")
+        req = RedirRequestSchema(
+            default_url="https://example.com", custom_url="default"
+        )
         mock_redir = MagicMock()
         mock_redir.default_url = "https://example.com"
         mock_redir.redir_url = "random7"
         mock_redir.redir_count = 0
         service.redir_repo.redir_set_url = AsyncMock(return_value=mock_redir)
 
-        with patch("src.modules.redir.service.redir_random_url", return_value="random7"):
+        with patch(
+            "src.modules.redir.service.redir_random_url", return_value="random7"
+        ):
             result = await service.redir_set_url(user_uuid="u1", req_data=req)
 
         service.redir_repo.redir_set_url.assert_awaited_once_with(
@@ -38,7 +42,9 @@ class TestRedirSetUrl:
 
     @pytest.mark.asyncio(loop_scope="function")
     async def test_custom_url_used_directly(self, service):
-        req = RedirRequestSchema(default_url="https://example.com", custom_url="myalias")
+        req = RedirRequestSchema(
+            default_url="https://example.com", custom_url="myalias"
+        )
         mock_redir = MagicMock()
         mock_redir.default_url = "https://example.com"
         mock_redir.redir_url = "myalias"
@@ -63,7 +69,9 @@ class TestRedirSetUrl:
 
     @pytest.mark.asyncio(loop_scope="function")
     async def test_integrity_error_default_url_retries_5_times(self, service):
-        req = RedirRequestSchema(default_url="https://example.com", custom_url="default")
+        req = RedirRequestSchema(
+            default_url="https://example.com", custom_url="default"
+        )
         service.redir_repo.redir_set_url = AsyncMock(
             side_effect=IntegrityError("test", "test", Exception())
         )
@@ -78,7 +86,11 @@ class TestRedirSetUrl:
 class TestRedirGetList:
     @pytest.mark.asyncio(loop_scope="function")
     async def test_returns_list(self, service):
-        items = [RedirResponseSchema(default_url="https://a.com", redir_url="abc", redir_count=0)]
+        items = [
+            RedirResponseSchema(
+                default_url="https://a.com", redir_url="abc", redir_count=0
+            )
+        ]
         service.redir_repo.redir_get_list = AsyncMock(return_value=items)
 
         result = await service.redir_get_list(user_uuid="u1")
@@ -99,6 +111,8 @@ class TestRedirGetUrl:
         mock_redir = MagicMock()
         mock_redir.default_url = "https://target.com"
         service.redir_repo.redir_get_url = AsyncMock(return_value=mock_redir)
+        service.redir_cache = AsyncMock()
+        service.redir_cache.get.return_value = None
 
         result = await service.redir_get_url(redir_url="abc1234")
 
@@ -108,6 +122,8 @@ class TestRedirGetUrl:
     @pytest.mark.asyncio(loop_scope="function")
     async def test_returns_none_when_not_found(self, service):
         service.redir_repo.redir_get_url = AsyncMock(return_value=None)
+        service.redir_cache = AsyncMock()
+        service.redir_cache.get.return_value = None
 
         result = await service.redir_get_url(redir_url="nonexistent")
 

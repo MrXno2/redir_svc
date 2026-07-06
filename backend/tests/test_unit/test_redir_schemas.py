@@ -26,7 +26,9 @@ class TestRedirRequestSchema:
         assert schema.custom_url == "default"
 
     def test_custom_url_set(self):
-        schema = RedirRequestSchema(default_url="https://example.com", custom_url="myalias")
+        schema = RedirRequestSchema(
+            default_url="https://example.com", custom_url="myalias"
+        )
         assert schema.custom_url == "myalias"
 
     def test_max_length_validation(self):
@@ -40,11 +42,15 @@ class TestRedirRequestSchema:
 
 class TestRedirResponseSchema:
     def test_from_attributes(self):
-        mock_obj = type("Mock", (), {
-            "default_url": "https://example.com",
-            "redir_url": "abc1234",
-            "redir_count": 5,
-        })()
+        mock_obj = type(
+            "Mock",
+            (),
+            {
+                "default_url": "https://example.com",
+                "redir_url": "abc1234",
+                "redir_count": 5,
+            },
+        )()
         schema = RedirResponseSchema.model_validate(mock_obj)
         assert schema.default_url == "https://example.com"
         assert schema.redir_url == "abc1234"

@@ -12,8 +12,7 @@ class RedirService:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
         self.redir_repo = RedirRepository(db)
-        self.redir_cache = redir_cache_redis # редис
-
+        self.redir_cache = redir_cache_redis  # редис
 
     async def redir_set_url(
         self, user_uuid: str, req_data: RedirRequestSchema
@@ -36,7 +35,6 @@ class RedirService:
                     raise RedirCreateError() from err
         raise RedirCreateError()
 
-
     async def redir_get_list(self, user_uuid: str) -> list[RedirResponseSchema]:
         redir_list = await self.redir_repo.redir_get_list(user_uuid=user_uuid)
         if redir_list:
@@ -45,6 +43,7 @@ class RedirService:
             raise ListEmpty()
 
         # добавить запись в кеш после коммита
+
     async def redir_get_url(self, redir_url: str) -> str | None:
         cached_url = await self.redir_cache.get(redir_url)
         if cached_url:
@@ -60,7 +59,7 @@ class RedirService:
             raise URLNotFound() from err
 
         # сделать инвалидацию кеша после коммита
+
     async def redir_del_url(self, user_uuid: str, redir_url: str) -> None:
         await self.redir_cache.delete(redir_url)
         await self.redir_repo.redir_del_url(uuid_user=user_uuid, redir_url=redir_url)
-    

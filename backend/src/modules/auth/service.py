@@ -1,18 +1,17 @@
 from authx import TokenResponse
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.exception import InvalidPassword, UserAlreadyExists, UserNotFound
 from src.core.security import create_token, hashed_pass, verify_password
 from src.modules.auth.repository import AuthRepository
-from src.modules.auth.schemas import AuthRegisterShema, AuthLoginShema
+from src.modules.auth.schemas import AuthLoginShema, AuthRegisterShema
 
 
 class AuthService:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
         self.user_repo = AuthRepository(db)
-
 
     async def auth_login(self, req_data: AuthLoginShema) -> TokenResponse:
         user_model = await self.user_repo.get_user(login=req_data.login)
@@ -22,7 +21,6 @@ class AuthService:
             return create_token(str(user_model.uuid))
         else:
             raise InvalidPassword()
-
 
     async def auth_register(self, req_data: AuthRegisterShema) -> TokenResponse | None:
         try:

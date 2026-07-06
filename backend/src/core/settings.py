@@ -1,17 +1,18 @@
 from datetime import timedelta
 from pathlib import Path
 
+from authx.types import TokenLocation
 from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from authx.types import TokenLocation
-
 
 # нужно установить прямой путь к корню проекта и передавать в env
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(
+        env_file=BASE_DIR / ".env", env_file_encoding="utf-8"
+    )
 
     PROJECT_NAME: str = "my-project"
     # docker run -d --name my-redis -p 6379:6379 redis:alpine
@@ -34,7 +35,6 @@ class Settings(BaseSettings):
     POSTGRES_IP: str = "localhost"
     POSTGRES_PORT: int = 5432
 
-
     @computed_field
     @property
     def REDIS_URL(self) -> str:
@@ -54,5 +54,6 @@ class Settings(BaseSettings):
     @property
     def JWT_REFRESH_TOKEN_EXPIRES(self) -> timedelta:
         return timedelta(seconds=self.JWT_REFRESH_TOKEN_EXPIRES_SECONDS)
+
 
 settings = Settings()

@@ -1,9 +1,9 @@
 from authx import TokenResponse
 from fastapi import APIRouter, Response
-from src.core.settings import settings
-from src.modules.auth.schemas import AuthRegisterShema, AuthLoginShema
-from src.modules.dependencies import AuthServiceDep
 
+from src.core.settings import settings
+from src.modules.auth.schemas import AuthLoginShema, AuthRegisterShema
+from src.modules.dependencies import AuthServiceDep
 
 router = APIRouter(prefix="/api/auth")
 

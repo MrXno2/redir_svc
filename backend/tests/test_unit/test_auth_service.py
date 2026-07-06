@@ -28,8 +28,10 @@ class TestAuthLogin:
 
         req = AuthLoginShema(login="testuser", password="mypassword")
 
-        with patch("src.modules.auth.service.verify_password", return_value=True), \
-             patch("src.modules.auth.service.create_token") as mock_create:
+        with (
+            patch("src.modules.auth.service.verify_password", return_value=True),
+            patch("src.modules.auth.service.create_token") as mock_create,
+        ):
             mock_create.return_value = MagicMock(access_token="at", refresh_token="rt")
             result = await service.auth_login(req)
 
@@ -53,8 +55,10 @@ class TestAuthLogin:
 
         req = AuthLoginShema(login="testuser", password="wrongpassword")
 
-        with patch("src.modules.auth.service.verify_password", return_value=False), \
-             pytest.raises(InvalidPassword):
+        with (
+            patch("src.modules.auth.service.verify_password", return_value=False),
+            pytest.raises(InvalidPassword),
+        ):
             await service.auth_login(req)
 
 
@@ -65,23 +69,35 @@ class TestAuthRegister:
         mock_user.uuid = "new-uuid"
         service.user_repo.set_user = AsyncMock(return_value=mock_user)
 
-        req = AuthRegisterShema(login="newuser", password1="pass123", password2="pass123")
+        req = AuthRegisterShema(
+            login="newuser", password1="pass123", password2="pass123"
+        )
 
-        with patch("src.modules.auth.service.hashed_pass", return_value="hashed"), \
-             patch("src.modules.auth.service.create_token") as mock_create:
+        with (
+            patch("src.modules.auth.service.hashed_pass", return_value="hashed"),
+            patch("src.modules.auth.service.create_token") as mock_create,
+        ):
             mock_create.return_value = MagicMock(access_token="at", refresh_token="rt")
             result = await service.auth_register(req)
 
-            service.user_repo.set_user.assert_awaited_once_with(login="newuser", pass_hash="hashed")
+            service.user_repo.set_user.assert_awaited_once_with(
+                login="newuser", pass_hash="hashed"
+            )
             service.db.commit.assert_awaited_once()
             assert result.access_token == "at"
 
     @pytest.mark.asyncio(loop_scope="function")
     async def test_duplicate_user(self, service):
-        service.user_repo.set_user = AsyncMock(side_effect=IntegrityError("test", "test", Exception()))
+        service.user_repo.set_user = AsyncMock(
+            side_effect=IntegrityError("test", "test", Exception())
+        )
 
-        req = AuthRegisterShema(login="dupuser", password1="pass123", password2="pass123")
+        req = AuthRegisterShema(
+            login="dupuser", password1="pass123", password2="pass123"
+        )
 
-        with patch("src.modules.auth.service.hashed_pass", return_value="hashed"), \
-             pytest.raises(UserAlreadyExists):
+        with (
+            patch("src.modules.auth.service.hashed_pass", return_value="hashed"),
+            pytest.raises(UserAlreadyExists),
+        ):
             await service.auth_register(req)

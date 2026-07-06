@@ -1,5 +1,4 @@
 import logging
-import os
 import sys
 from logging import Logger
 from logging.handlers import RotatingFileHandler

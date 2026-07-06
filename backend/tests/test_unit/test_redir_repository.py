@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db.models.redir import RedirModel
 from src.modules.redir.repository import RedirRepository
-from src.modules.redir.schemas import RedirResponseSchema
 
 
 @pytest.fixture
@@ -58,7 +57,7 @@ class TestRedirGetList:
         result = await repo.redir_get_list(user_uuid="user-1")
 
         assert len(result) == 1
-        assert isinstance(result[0], RedirResponseSchema)
+        assert isinstance(result[0], RedirModel)
         assert result[0].default_url == "https://example.com"
 
     @pytest.mark.asyncio(loop_scope="function")

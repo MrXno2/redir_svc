@@ -4,8 +4,7 @@ import pytest
 @pytest.mark.asyncio(loop_scope="function")
 async def test_redir_add(auth_client):
     response = await auth_client.post(
-        "/api/redir/add",
-        json={"default_url": "qwerty.com", "custom_url": "default"}
+        "/api/redir/add", json={"default_url": "qwerty.com", "custom_url": "default"}
     )
     data = response.json()
     if response.status_code == 200:
@@ -16,9 +15,7 @@ async def test_redir_add(auth_client):
 
 @pytest.mark.asyncio(loop_scope="function")
 async def test_redir_list(client_with_redir):
-    response = await client_with_redir.get(
-        "/api/redir/list"
-    )
+    response = await client_with_redir.get("/api/redir/list")
     data = response.json()
     if response.status_code == 200:
         assert "default_url" in data[0]
@@ -28,8 +25,6 @@ async def test_redir_list(client_with_redir):
 
 @pytest.mark.asyncio(loop_scope="function")
 async def test_redir_in_url(client_with_redir):
-    response = await client_with_redir.get(
-        "/go/qwerty", follow_redirects=False
-    )
+    response = await client_with_redir.get("/go/qwerty", follow_redirects=False)
     assert response.status_code == 302
     assert response.headers["location"] == "https://example.com"
