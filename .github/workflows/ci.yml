@@ -10,6 +10,10 @@ jobs:
   builds-and-test:
     runs-on: ubuntu-latest
 
+    defaults:  # ВСЕ КОМАНДЫ БУДУТ В backend/
+      run:
+        working-directory: backend
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -27,7 +31,7 @@ jobs:
         run: docker compose up -d db
 
       - name: Run tests
-        run: docker comose run --rm app pytest
+        run: docker compose run --rm app pytest
 
       - name: Stop containers
         if: always()

@@ -4,7 +4,7 @@ from src.core.settings import settings
 
 redis_engine = Redis.from_url(settings.REDIS_URL, decode_responses=True)
 
-
+ 
 class RedisCacheBackend:
     def __init__(
         self, redis: Redis, cache_key: str, cache_ttl_seconds: int | None = None
