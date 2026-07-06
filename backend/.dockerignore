@@ -35,4 +35,3 @@ compose.yml
 compose.dev.yml
 logs
 .log
-tests
