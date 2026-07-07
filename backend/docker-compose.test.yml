@@ -2,20 +2,18 @@ services:
   test:
     build:
       context: .
-      target: builder
+      target: test
 
     env_file:
       - .env
+
+    working_dir: /app
 
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_started
-
-    working_dir: /app
-
-    command: pytest
 
   db:
     image: postgres:16-alpine
@@ -30,4 +28,4 @@ services:
       retries: 5
 
   redis:
-    image: redis:8-alpine
+    image: redis:8.8.0-alpine

@@ -1,0 +1,25 @@
+name: Deploy to prod
+
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-to-prod:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare .env
+        run: cp .env.example .env
+
+      - name: Remove previous deploy
+        run: docker compose -p redir-prod down -v
+
+      - name: Deploy project
+        run: APP_PUBLIC_PORT=18002 docker compose -p redir-prod up --build -d

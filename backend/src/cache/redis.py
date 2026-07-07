@@ -32,3 +32,7 @@ class RedisCacheBackend:
 redir_cache_redis: RedisCacheBackend = RedisCacheBackend(
     redis=redis_engine, cache_key="redir:", cache_ttl_seconds=3600
 )
+
+redir_count_cache_redis = RedisCacheBackend(
+    redis=redis_engine, cache_key="redir_count:", cache_ttl_seconds=None  # без TTL, менеджер чистит
+)

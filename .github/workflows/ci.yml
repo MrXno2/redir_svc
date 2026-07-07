@@ -21,17 +21,17 @@ jobs:
         run: cp .env.example .env
 
       - name: Build images
-        run: docker compose -f docker-compose.yml -f docker-compose.test.yml build
+        run: docker compose -f docker-compose.test.yml build
 
       - name: Start infrastructure
-        run: docker compose -f docker-compose.yml -f docker-compose.test.yml up -d db redis
+        run: docker compose -f docker-compose.test.yml up -d db redis
 
-      - name: Ruff
-        run: docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm test ruff check .
+      - name: Ruff check
+        run: docker compose -f docker-compose.test.yml run --rm test ruff check .
 
       - name: Pytest
-        run: docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm test pytest
+        run: docker compose -f docker-compose.test.yml run --rm test pytest
 
       - name: Shutdown
         if: always()
-        run: docker compose -f docker-compose.yml -f docker-compose.test.yml down -v
+        run: docker compose -f docker-compose.test.yml down -v
