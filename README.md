@@ -23,7 +23,7 @@ URL redirect service with short links, click analytics, and JWT authentication.
 ### Infrastructure
 - **Docker** multi-stage builds (test / production)
 - **Docker Compose** — local orchestration (Postgres, Redis, app)
-- **GitHub Actions** — CI (lint + test) & CD (deploy)
+- **GitHub Actions** — CI (lint + test) & CD (deploy "not done")
 - **Ruff** — linting & formatting
 
 ## Project structure
