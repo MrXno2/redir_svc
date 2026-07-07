@@ -21,14 +21,22 @@ class RedirRepository:
         )
         return list(redir_list.scalars().all())
 
+
     async def redir_get_url(self, redir_url: str) -> RedirModel | None:
         url = await self.db.execute(
-            update(RedirModel)
+            select(RedirModel)
             .where(RedirModel.redir_url == redir_url)
-            .values(redir_count=RedirModel.redir_count + 1)
-            .returning(RedirModel)
         )
         return url.scalar_one_or_none()
+
+
+    async def redir_update_url(self, redir_url: str, redir_cnt: int) -> None:
+        await self.db.execute(
+            update(RedirModel)
+            .where(RedirModel.redir_url == redir_url)
+            .values(redir_count=RedirModel.redir_count + redir_cnt)
+        )
+
 
     async def redir_del_url(self, uuid_user: str, redir_url: str) -> None:
         await self.db.execute(

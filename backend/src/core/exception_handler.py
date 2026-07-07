@@ -28,7 +28,7 @@ def register_exception_handlers(app: FastAPI):
         return JSONResponse(
             status_code=409,
             content={
-                "message": "Пользователь уже сущетвует.",
+                "message": "Пользователь уже существует.",
                 "error_type": "UserAlreadyExists",
             },
         )
@@ -38,7 +38,7 @@ def register_exception_handlers(app: FastAPI):
         return JSONResponse(
             status_code=404,
             content={
-                "message": "Сыылка устарела или не существует.",
+                "message": "Ссылка устарела или не существует.",
                 "error_type": "URLNotFound",
             },
         )

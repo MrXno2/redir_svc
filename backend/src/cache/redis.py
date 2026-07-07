@@ -29,6 +29,11 @@ class RedisCacheBackend:
         await self.redis.delete(self.cache_key + key)
 
 
+    async def incr(self, key: str) -> int:
+        count = await self.redis.incr(self.cache_key + key)
+        return count
+
+
 redir_cache_redis: RedisCacheBackend = RedisCacheBackend(
     redis=redis_engine, cache_key="redir:", cache_ttl_seconds=3600
 )
