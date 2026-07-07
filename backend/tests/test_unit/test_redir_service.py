@@ -3,7 +3,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from sqlalchemy.exc import IntegrityError
 
-from src.core.exception import ListEmpty, RedirCreateError
+from src.core.exception import ListEmpty, RedirCreateError, URLNotFound
 from src.modules.redir.schemas import RedirRequestSchema, RedirResponseSchema
 from src.modules.redir.service import RedirService
 
@@ -113,18 +113,34 @@ class TestRedirGetUrl:
         service.redir_repo.redir_get_url = AsyncMock(return_value=mock_redir)
         service.redir_cache = AsyncMock()
         service.redir_cache.get.return_value = None
+        service.redir_count_cache = AsyncMock()
+        service.redir_count_cache.incr.return_value = 1
 
         result = await service.redir_get_url(redir_url="abc1234")
 
         assert result == "https://target.com"
-        service.db.commit.assert_awaited_once()
+        service.redir_cache.set.assert_awaited_once_with(
+            "abc1234", "https://target.com"
+        )
 
     @pytest.mark.asyncio(loop_scope="function")
-    async def test_returns_none_when_not_found(self, service):
+    async def test_returns_cached_url(self, service):
+        service.redir_cache = AsyncMock()
+        service.redir_cache.get.return_value = "https://cached.com"
+        service.redir_count_cache = AsyncMock()
+        service.redir_count_cache.incr.return_value = 1
+        service.redir_repo.redir_get_url = AsyncMock()
+
+        result = await service.redir_get_url(redir_url="abc1234")
+
+        assert result == "https://cached.com"
+        service.redir_repo.redir_get_url.assert_not_awaited()
+
+    @pytest.mark.asyncio(loop_scope="function")
+    async def test_raises_url_not_found(self, service):
         service.redir_repo.redir_get_url = AsyncMock(return_value=None)
         service.redir_cache = AsyncMock()
         service.redir_cache.get.return_value = None
 
-        result = await service.redir_get_url(redir_url="nonexistent")
-
-        assert result is None
+        with pytest.raises(URLNotFound):
+            await service.redir_get_url(redir_url="nonexistent")
