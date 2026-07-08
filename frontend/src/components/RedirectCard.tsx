@@ -15,10 +15,25 @@ export function RedirectCard({ redirect, onDelete }: Props) {
   const shortUrl = `${window.location.origin}/go/${redirect.redir_url}`;
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(shortUrl);
-    setCopied(true);
-    toast.success("Copied to clipboard");
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shortUrl);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = shortUrl;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
+      setCopied(true);
+      toast.success("Copied to clipboard");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Failed to copy");
+    }
   };
 
   const handleDelete = async () => {
