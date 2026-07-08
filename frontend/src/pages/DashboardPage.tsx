@@ -4,7 +4,6 @@ import { parseApiError } from "../api/axios";
 import type { RedirResponse } from "../types";
 import { RedirectCard } from "../components/RedirectCard";
 import { AddRedirect } from "../components/AddRedirect";
-import { toast } from "../components/Toast";
 import { Link2, Inbox } from "lucide-react";
 
 export function DashboardPage() {
