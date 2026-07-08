@@ -22,8 +22,9 @@ URL redirect service with short links, click analytics, and JWT authentication.
 
 ### Infrastructure
 - **Docker** multi-stage builds (test / production)
-- **Docker Compose** — local orchestration (Postgres, Redis, app)
-- **GitHub Actions** — CI (lint + test) & CD (deploy "not done")
+- **Docker Compose** — full stack (Postgres, Redis, FastAPI, Nginx)
+- **Nginx** — reverse proxy + static files + SPA routing
+- **GitHub Actions** — CI (lint + test)
 - **Ruff** — linting & formatting
 
 ## Project structure
@@ -53,8 +54,14 @@ redir_svc/
 │   │   ├── context/        # auth provider
 │   │   ├── pages/          # login, register, dashboard
 │   │   └── types/          # TypeScript types
+│   ├── Dockerfile
 │   ├── vite.config.ts
 │   └── tailwind.config.js
+├── infra/
+│   ├── docker-compose.yml  # production stack (redis, db, app, nginx)
+│   └── nginx/
+│       ├── Dockerfile      # multi-stage: builds frontend + nginx
+│       └── nginx.conf      # reverse proxy + static files
 └── .github/workflows/      # CI/CD
 ```
 
@@ -75,20 +82,42 @@ cp .env.example .env
 uvicorn src.main:app --host 0.0.0.0 --port 8080 --reload
 ```
 
-### Docker
+### Docker (production)
 
 ```bash
-cd backend
+cd infra
 
-# production (app + postgres + redis)
-docker compose -f docker-compose.prod.yml up --build -d
+# build and start all services (redis, db, app, nginx)
+docker compose up --build -d
 
-# run tests in containers
-docker compose -f docker-compose.test.yml up --build test
+# stop
+docker compose down
 
-# stop and clean
-docker compose -f docker-compose.prod.yml down -v
+# stop and delete data
+docker compose down -v
 ```
+
+### VPS deploy
+
+```bash
+# install Docker
+curl -fsSL https://get.docker.com | sudo sh
+sudo usermod -aG docker $USER
+# re-login
+
+# clone
+git clone <repo> redir_svc
+cd redir_svc
+
+# create .env and add your server IP to CORS_ALLOWED_ORIGINS
+cp backend/.env.example backend/.env
+
+# run
+cd infra
+docker compose up --build -d
+```
+
+Open port 80 on VPS firewall. Access at `http://YOUR_SERVER_IP`.
 
 ### Frontend
 
